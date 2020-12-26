@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+    修改密码
+{% endblock %}
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-4">
+                <form action="." method="post">
+                    {% csrf_token %}
+                    <div class="modal-content" style="margin-top: 30%;margin-left: 100%">
+                        <table>
+                            <h4 class="mt-2" style="align-self: center">修改密码</h4>
+                            <div class="mt-2 ml-4">
+                                {{ form.as_ul }}
+                            </div>
+                            <button type="submit" class="btn btn-primary float-right">提交</button>
+                        </table>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

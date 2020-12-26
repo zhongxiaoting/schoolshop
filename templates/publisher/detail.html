@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+    商品详情
+{% endblock %}
+{% block content %}
+    <div class="container">
+        <div class="row col-10 ml-lg-5">
+            <div class="mt-4">
+                <img src="{{ products.avatar.url }}" alt="" style="width: 890px; height: 450px; border-radius: 20px;">
+            </div>
+            <div>
+                <h4 class="mt-4 col-12 mb-4">商品：{{ products.name }}</h4>
+            </div>
+            {# 销售量 #}
+            <div style="text-align: center" class="mt-4">
+                <button class="btn btn-primary" type="button" onclick="validate_is_like(
+                        '{% url 'publisher:publisher_sale' products.id %}',
+                        {{ products.id }},
+                        {{ products.total_sale }}
+                        )"
+                >
+                    <span>购买</span>
+                </button>
+
+                <span class="ml-2" style="color: red">销售量:</span>
+                <span style="color: red" id="sale_number"> {{ products.total_sale }}</span>
+            </div>
+
+            <div class="col-12 alert alert-success">
+
+                价格: &nbsp;<span style="color: red;font-size: x-large">约￥{{ products.price }}</span>
+                {% if user == products.publisher %}
+                    <a href="#" onclick="confirm_safe_delete()" class="mx-2">删除商品</a>
+                    <a href="{% url 'publisher:publisher_update' products.id %}">修改信息</a>
+                {% endif %}
+                <div>商家：<span style="color: #005cbf;">{{ products.publisher }}</span></div>
+                <div>联系方式：{{ products.phone }}</div>
+            </div>
+            <form action="{% url 'publisher:publisher_safe_delete' products.id %}"
+                  id="safe_delete"
+                  method="post"
+                  style="display: none">
+                {% csrf_token %}
+                <button type="submit">发送</button>
+            </form>
+
+            <div class="col-12">
+                <p>{{ products.description }}</p>
+            </div>
+        </div>
+        <br>
+        <br>
+    </div>
+
+    {% block script %}
+        <script>
+            function confirm_safe_delete() {
+                layer.open({
+                    title: "确认删除",
+                    content: "确认删除这个商品吗？",
+                    yes: function (index, layer) {
+                        $('form#safe_delete button').click();
+                        layer.close(index);
+                    }
+                })
+            };
+        </script>
+
+        <script src="{% static 'csrf.js' %}"></script>
+        <script>
+            // 点赞功能主函数
+            function validate_is_like(url, id, total_sale) {
+                // 取出 LocalStorage 中的数据
+                let storage = window.localStorage;
+                const storage_str_data = storage.getItem("my_blog_data");
+                let storage_json_data = JSON.parse(storage_str_data);
+                // 若数据不存在，则创建空字典
+                if (!storage_json_data) {
+                    storage_json_data = {}
+                }
+                ;
+                // 检查当前文章是否已点赞。是则 status = true
+
+
+                // 用 Jquery 找到点赞数量，并 +1
+                $('span#likes_number').text(total_sale + 1).css('color', '#dc3545');
+
+                // 用 ajax 向后端发送 post 请求
+                $.post(
+                    url,
+                    // post 只是为了做 csrf 校验，因此数据为空
+                    {},
+                    function (result) {
+                        if (result === 'success') {
+                            // 尝试修改点赞数据
+                            try {
+                                storage_json_data[id] = true;
+                            } catch (e) {
+                                window.localStorage.clear();
+                            }
+                            ;
+                            // 将字典转换为字符串，以便存储到 LocalStorage
+                            const d = JSON.stringify(storage_json_data);
+                            // 尝试存储点赞数据到 LocalStorage
+                            try {
+                                storage.setItem("my_blog_data", d);
+                            } catch (e) {
+                                // code 22 错误表示 LocalStorage 空间满了
+                                if (e.code === 22) {
+                                    window.localStorage.clear();
+                                    storage.setItem("my_blog_data", d);
+                                }
+                            }
+                            ;
+                        } else {
+                            layer.msg("与服务器通信失败..过一会儿再试试呗~");
+                        }
+
+                    }
+                );
+            };
+
+            $(function () {
+                setInterval(function () {
+                    $("#sale_number").load(location.href + " #sale_number");//注意后面DIV的ID前面的空格，很重要！没有空格的话，会出双眼皮！（也可以使用类名）
+                }, 100);//8秒自动刷新
+            });
+        </script>
+
+    {% endblock %}
+
+{% endblock %}

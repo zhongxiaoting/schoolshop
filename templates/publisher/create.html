@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+    发布商品
+{% endblock %}
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <form action="." method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="form-group mt-4">
+                        <label for="name">商品名：</label>
+                        <input type="text" class="form-control" id="name" name="name">
+                    </div>
+                    {# 文章标题图 #}
+                    <div class="form-group">
+                        <label for="avatar">图片：</label>
+                        <input type="file" class="form-control-file" name="avatar" id="avatar">
+                    </div>
+                    {# 联系方式 #}
+                    <div class="form-group mt-4">
+                        <label for="phone">联系方式：</label>
+                        <input type="text" class="form-control" id="phone" name="phone">
+                    </div>
+                    {# 价格 #}
+                    <div class="form-group">
+                        <label for="price">价格：</label>
+                        <input type="text" class="form-control" id="price" name="price">
+                    </div>
+                    {# 描述 #}
+                    <div class="form-group">
+                        <label for="description">描述：</label>
+                        <textarea name="description" id="description" cols="30" rows="5" class="form-control"></textarea>
+                    </div>
+                    {# 提交按钮 #}
+                    <button type="submit" class="btn btn-success float-right">完成</button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

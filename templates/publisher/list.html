@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+{% load  filters_and_time %}
+{% load static %}
+
+{% block title %}
+    首页
+{% endblock %}
+{% block content %}
+    <div class="container">
+
+    <!-- 新增，搜索栏 -->
+    <div class="row">
+        <div class="col-auto mr-auto mt-3">
+            <form class="form-inline" >
+                <label class="sr-only">content</label>
+                <input type="text"
+                    class="form-control mb-2 mr-sm-2 col-lg-12"
+                    name="search"
+                    placeholder="搜索商品..."
+                    required
+                >
+            </form>
+        </div>
+    </div>
+
+    <!-- 新增，搜索提示语 -->
+    {% if search %}
+        {% if products %}
+            <h4><span style="color: red">"{{ search }}"</span>的搜索结果如下：</h4>
+            <hr>
+        {% else %}
+            <h4>暂无<span style="color: red">"{{ search }}"</span>有关的商品。</h4>
+            <hr>
+        {% endif %}
+    {% endif %}
+
+        <div class="row mt-1">
+            {% for product in products %}
+                <div class="col-4 mb-4">
+                    <div class="card">
+                        {# 图片 #}
+                        {% if product.avatar %}
+                            <div>
+                                <img src="{{ product.avatar.url }}" alt="avatar" style="max-width: 100%;">
+                            </div>
+                        {% endif %}
+                        {# 价格 #}
+                        <span class="mt-2" style="color: red;font-size: x-large">约￥{{ product.price }}</span>
+                        {# 标题 #}
+                        <span style="color: #005cbf">{{ product.name }}</span>
+                        {# 发布者 #}
+                        <span style="color: gray;">发布人：{{ product.publisher }}</span>
+                        {# 注脚 #}
+                        <div class="card-footer">
+                            <span>
+                                <i class="fas fa-clock" style="color: pink;"></i>
+                                     {{ product.created|timesince_zh}}
+                            </span>
+                            <span class="ml-4">销售量：{{ product.total_sale }}</span>
+                            <a href="{% url 'publisher:publisher_detail' product.id %}"
+                               class="btn btn-primary float-right">详情</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        {# 页码导航 #}
+        <div class="pagination row">
+            <div class="m-auto">
+                <span class="step-links">
+                    {# 如果不是第一页就向上翻 #}
+                    {% if products.has_previous %}
+                        <a href="?page=1&search={{ search }}&order={{ order }}" class="btn btn-success">
+                        &laquo;1
+                        </a>
+                        <span>...</span>
+                        <a href="?page={{ products.previous_page_number }}&search={{ search }}&order={{ order }}" class="btn btn-secondary">
+                        {{ products.previous_page_number }}
+                        </a>
+                    {% endif %}
+                    {# 当前页 #}
+                <span class="current btn btn-danger btn-lg">
+                    {{ products.number }}
+                </span>
+                {# 如果不是最后一页就向下翻 #}
+                    {% if products.has_next %}
+                        <a href="?page={{ products.next_page_number }}&search={{ search }}" class="btn btn-secondary">
+                            {{ products.next_page_number }}
+                        </a>
+                        <span>...</span>
+                        <a href="?page={{ products.paginator.num_pages }}&search={{ search }}&order={{ order }}" class="btn btn-success">
+                        {{ products.paginator.num_pages }} &laquo;
+                        </a>
+
+                    {% endif %}
+                </span>
+            </div>
+        </div>
+    </div>
+{% endblock %}

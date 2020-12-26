@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+    登录
+{% endblock %}
+{% block content %}
+    <div class="container">
+        <div class="col-md-6 offset-md-3" style="margin-top: 6%;">
+            <div class="modal-content">
+                <form action="." method="post">
+                    {% csrf_token %}
+                    <div class="alert alert-success">
+                        <h3 style="text-align: center">校园小商品交易平台登录</h3>
+                    </div>
+                    {# 账号 #}
+                    <div class="form-group">
+                        <label for="username">账号:</label>
+                        <input type="text" id="username" name="username" class="form-control" placeholder="请输入用户名">
+                    </div>
+                    {# 密码 #}
+                    <div class="form-group">
+                        <label for="password">密码:</label>
+                        <input type="password" id="password" name="password" class="form-control" placeholder="请输入密码">
+                    </div>
+                    {# 提交表单 #}
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <button type="submit" class="btn btn-primary">登录</button>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <a href="{% url 'userprofile:register' %}" class="btn-success btn" role="button">注册</a>
+                    <br/>
+                    <br/>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
